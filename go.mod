@@ -1,6 +1,6 @@
 module github.com/hamwiwatsapon/go-ticket-booking
 
-go 1.21.6
+go 1.21
 
 require (
 	github.com/bytedance/sonic v1.12.4 // indirect
