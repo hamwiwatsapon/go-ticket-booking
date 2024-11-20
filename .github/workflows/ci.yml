@@ -36,6 +36,14 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
 
+      # Debug Step: Check go.mod and go.sum
+      - name: Debug go.mod and go.sum
+        run: |
+          echo "---- go.mod ----"
+          cat go.mod
+          echo "---- go.sum ----"
+          cat go.sum
+
       # Step 5: Run tests
       - name: Run tests
         run: go test ./... -v
