@@ -1,13 +1,46 @@
 linters:
+  disable-all: true
   enable:
     - gofmt
-    - golint
     - govet
     - errcheck
     - staticcheck
     - gosimple
     - unused
+    - revive # Modern replacement for golint
     - misspell
+    - gocyclo
+    - bodyclose
+    - gocritic
+    - gosec
+    - unconvert
+    - unparam
+
+linters-settings:
+  govet:
+    check-shadowing: true
+  gocyclo:
+    min-complexity: 15
+  revive:
+    rules:
+      - name: exported
+        arguments:
+          - disableStutteringCheck: true
+  gosec:
+    excludes:
+      - G404 # Insecure random number source (math/rand)
+      - G114 # Use of net/http serve function that has no support for setting timeouts
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+        - errcheck
 
 run:
-  deadline: 5m
+  timeout: 5m
+  tests: false
+  skip-dirs:
+    - vendor/
+    - third_party/
