@@ -3,6 +3,7 @@ linters:
   enable:
     - gofmt
     - govet
+    - shadow # Replacing deprecated govet.check-shadowing
     - errcheck
     - staticcheck
     - gosimple
@@ -17,14 +18,11 @@ linters:
     - unparam
 
 linters-settings:
-  govet:
-    check-shadowing: true
   gocyclo:
     min-complexity: 15
   revive:
     rules:
       - name: exported
-        arguments: ["disableStutteringCheck=true"]
   gosec:
     excludes:
       - G404 # Insecure random number source (math/rand)
@@ -40,6 +38,7 @@ issues:
 run:
   timeout: 5m
   tests: false
-  skip-dirs:
-    - vendor/
-    - third_party/
+  issues:
+    exclude-dirs:
+      - vendor/
+      - third_party/
