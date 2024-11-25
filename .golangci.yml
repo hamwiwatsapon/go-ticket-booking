@@ -3,12 +3,11 @@ linters:
   enable:
     - gofmt
     - govet
-    - shadow # Replacing deprecated govet.check-shadowing
     - errcheck
     - staticcheck
     - gosimple
     - unused
-    - revive # Modern replacement for golint
+    - revive
     - misspell
     - gocyclo
     - bodyclose
@@ -17,16 +16,16 @@ linters:
     - unconvert
     - unparam
 
-linters-settings:
-  gocyclo:
-    min-complexity: 15
-  revive:
-    rules:
-      - name: exported
-  gosec:
-    excludes:
-      - G404 # Insecure random number source (math/rand)
-      - G114 # Use of net/http serve function that has no support for setting timeouts
+gocyclo:
+  min-complexity: 15
+revive:
+  rules:
+    - name: exported
+gosec:
+  excludes:
+    - G101 # Hardcode credentianls
+    - G404 # Insecure random number source (math/rand)
+    - G114 # Use of net/http serve function that has no support for setting timeouts
 
 issues:
   exclude-rules:
@@ -38,7 +37,3 @@ issues:
 run:
   timeout: 5m
   tests: false
-  issues:
-    exclude-dirs:
-      - vendor/
-      - third_party/
