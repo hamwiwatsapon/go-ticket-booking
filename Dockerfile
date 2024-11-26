@@ -13,10 +13,14 @@ RUN go mod download && go mod verify
 # Copy the source code
 COPY . .
 
-# Build with additional flags for optimized binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+# Verbose build with error checking
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v \
     -ldflags="-w -s" \
     -o main .
+
+# Debug: list contents and check binary
+RUN ls -la
+RUN file main
 
 # Final stage
 FROM alpine:latest
