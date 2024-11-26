@@ -3,24 +3,18 @@ FROM golang:1.23-alpine AS builder
 # Set destination for COPY
 WORKDIR /app
 
-# Install git if you have dependencies from git repositories
-RUN apk add --no-cache git
+# Install git and necessary tools
+RUN apk add --no-cache git build-base
 
 # Download Go modules
 COPY go.mod go.sum ./
-RUN go mod download && go mod verify
+RUN go mod tidy && go mod download && go mod verify
 
 # Copy the source code
 COPY . .
 
 # Verbose build with error checking
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v \
-    -ldflags="-w -s" \
-    -o main .
-
-# Debug: list contents and check binary
-RUN ls -la
-RUN file main
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
 
 # Final stage
 FROM alpine:latest
