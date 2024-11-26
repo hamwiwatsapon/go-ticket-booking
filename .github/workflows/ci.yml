@@ -1,0 +1,86 @@
+name: Go Application CI/CD
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Run go mod tidy
+        run: go mod tidy
+
+      - name: Run tests
+        run: go test ./... -v
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Docker Build and Push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+          # Build Docker image
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }} .
+
+          # Push images
+          docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+
+      # # Optional: Deploy to server via SSH
+      # - name: Deploy to Production
+      #   # Only deploy on main branch
+      #   if: github.ref == 'refs/heads/main'
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      #     SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      #     SERVER_USER: ${{ secrets.SERVER_USER }}
+      #   run: |
+      #     # Install SSH key
+      #     mkdir -p ~/.ssh
+      #     echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+
+      #     # SSH into server and deploy
+      #     ssh $SERVER_USER@$SERVER_HOST << EOF
+      #       # Pull latest image
+      #       docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+
+      #       # Stop existing container if it exists
+      #       docker stop myapp || true
+      #       docker rm myapp || true
+
+      #       # Run new container
+      #       docker run -d \
+      #         --name myapp \
+      #         -p 8080:8080 \
+      #         -e ENV_VARIABLE=value \
+      #         ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+      #     EOF
