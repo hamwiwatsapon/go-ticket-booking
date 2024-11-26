@@ -37,8 +37,8 @@ USER appuser
 EXPOSE 8080
 
 # Add health check if applicable
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s \
-  CMD wget -q -O- http://localhost:8080/health || exit 1
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=5s \
+#   CMD wget -q -O- http://localhost:8080/health || exit 1
 
 # Command to run the executable
 CMD ["./main"]
