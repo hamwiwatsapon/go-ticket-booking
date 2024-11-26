@@ -46,12 +46,12 @@ jobs:
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
           # Build Docker image
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp:latest .
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }} .
+          docker build -t go-ticket-booking:latest .
+          docker build -t go-ticket-booking:${{ github.sha }} .
 
           # Push images
-          docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+          docker push go-ticket-booking:latest
+          docker push go-ticket-booking:${{ github.sha }}
 
       # # Optional: Deploy to server via SSH
       # - name: Deploy to Production
