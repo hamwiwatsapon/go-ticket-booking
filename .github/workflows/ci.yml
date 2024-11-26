@@ -50,8 +50,8 @@ jobs:
           docker build -t go-ticket-booking:${{ github.sha }} .
 
           # Push images
-          docker push go-ticket-booking:latest
-          docker push go-ticket-booking:${{ github.sha }}
+          docker push hamlert33/go-ticket-booking:latest
+          docker push hamlert33/go-ticket-booking:${{ github.sha }}
 
       # # Optional: Deploy to server via SSH
       # - name: Deploy to Production
