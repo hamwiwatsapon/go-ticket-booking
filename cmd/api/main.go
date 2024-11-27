@@ -39,7 +39,7 @@ func main() {
 	router := setupRouter(userHandler)
 
 	// Start server
-	if err := router.Run(":8080"); err != nil {
+	if err := router.Run(":3333"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
 }
