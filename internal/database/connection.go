@@ -67,11 +67,6 @@ func InitPostgres(config DatabaseConfig) (*gorm.DB, error) {
 	// Open connection to database
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: newLogger,
-		// Optional: Add additional GORM configurations
-		// NamingStrategy: schema.NamingStrategy{
-		// 	TablePrefix:   "prefix_",   // table name prefix
-		// 	SingularTable: true,        // use singular table name
-		// },
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)

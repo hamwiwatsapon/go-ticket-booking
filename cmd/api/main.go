@@ -9,6 +9,7 @@ import (
 	"github.com/hamwiwatsapon/go-ticket-booking/internal/handler"
 	"github.com/hamwiwatsapon/go-ticket-booking/internal/repository"
 	"github.com/hamwiwatsapon/go-ticket-booking/internal/service"
+	"github.com/hamwiwatsapon/go-ticket-booking/pkg/middleware"
 )
 
 func main() {
@@ -57,7 +58,20 @@ func setupRouter(userHandler *handler.UserHandler) *gin.Engine {
 	{
 		v1.POST("/register", userHandler.Register)
 		v1.POST("/login", userHandler.Login)
+		v1.POST("/refresh-token", userHandler.RefreshToken)
 	}
 
+	protected := router.Group("/api/v1/protected")
+	protected.Use(middleware.JWTAuthMiddleware())
+	{
+		// Example of a route only accessible to admin
+		protected.GET("/admin", middleware.RoleMiddleware("admin"), func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"message": "Welcome, Admin!",
+			})
+		})
+
+		// Other protected routes can be added here
+	}
 	return router
 }
